@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>JSON to Java JSONObject</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="form-group">
+				<label for="exampleInputEmail1">Enter the JSON to convert</label>
+				<textarea class="form-control" cols="30" rows="10" id="input"></textarea>
+		  	</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<button type="submit" class="btn btn-primary" style="width: 100%" onclick="startProccess();">Convert</button>
+		</div>
+	</div>
+	<br/>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="form-group">
+				<textarea class="form-control" cols="30" rows="10" id="output"></textarea>
+		  	</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+    let getObjectType = (obj) => {
+        return Object.prototype.toString.call(obj).replace('[object ',"").replace("]", "");
+    }
+
+	let convertArrayOccurrences = (arr, tabs) => {
+        tabs++;
+        let ret = "new JSONArray()"
+		let tabsStr = "";
+		for(let i = 0; i < tabs; i++){
+			tabsStr += "    ";
+		}
+		for(let i in arr){
+			let type = getObjectType(arr[i]);
+			if(type === 'Object'){
+				ret += "\n" + tabsStr + ".add("+convertObjectKeys(arr[i], tabs)+")";
+			}
+			if(type === 'Array'){
+				ret += "\n" + tabsStr + ".add("+convertArrayOccurrences(arr[i], tabs)+")";
+			}
+			if(type === 'String'){
+				ret += "\n" + tabsStr + ".add(\""+arr[i]+"\")";
+			}
+			if(type === 'Number'){
+				ret += "\n" + tabsStr + ".add("+arr[i]+")";
+			}
+			if(type === 'Boolean'){
+				ret += "\n" + tabsStr + ".add("+arr[i]+")";
+			}
+			if(type === 'Null'){
+				ret += "\n" + tabsStr + ".add(null)";
+			}
+		}
+		return ret;
+	}
+
+    let convertObjectKeys = (obj, tabs) => {
+        tabs++;
+        let ret = "new JSONObject()"
+		let tabsStr = "";
+		for(let i = 0; i < tabs; i++){
+			tabsStr += "    ";
+		}
+        for (var property in obj) {
+			if (obj.hasOwnProperty(property)) {
+				let type = getObjectType(obj[property]);
+				if(type === 'Object'){
+					ret += "\n" + tabsStr + ".put(\""+property+"\", "+convertObjectKeys(obj[property], tabs)+")";
+				}
+				if(type === 'Array'){
+					ret += "\n" + tabsStr + ".put(\""+property+"\", "+convertArrayOccurrences(obj[property], tabs)+")";
+				}
+				if(type === 'String'){
+					ret += "\n" + tabsStr + ".put(\""+property+"\", \""+obj[property]+"\")";
+				}
+				if(type === 'Number'){
+					ret += "\n" + tabsStr + ".put(\""+property+"\", "+obj[property]+")";
+				}
+				if(type === 'Boolean'){
+					ret += "\n" + tabsStr + ".put(\""+property+"\", "+obj[property]+")";
+				}
+				if(type === 'Null'){
+					ret += "\n" + tabsStr + ".put(\""+property+"\", null)";
+				}
+			}
+        }
+		return ret;
+    }
+
+    const proccess = (obj) => {
+        let tabs = 0;
+        let type = getObjectType(obj);
+		let ret = "There's an error with your JSON";
+        if(type === 'Object'){
+            ret =  convertObjectKeys(obj, tabs);
+        }
+        if(type === 'Array'){
+            ret =  convertArrayOccurrences(obj, tabs);
+        }
+        if(type === 'String'){
+            ret = "\""+obj+"\"";
+        }
+        if(type === 'Boolean'){
+            ret = obj;
+        }
+        if(type === 'Number'){
+            ret = obj;
+        }
+        if(type === 'Null'){
+            ret = "null";
+        }
+		return ret+";";
+    }
+
+	const startProccess = () => {
+		$("#output").val("There's an error with your JSON");
+		$("#output").val(proccess(JSON.parse($("#input").val())));
+	}
+
+
+    //console.log(nullifier({nome: "null"}));
+</script>
+
+</body>
+</html>
