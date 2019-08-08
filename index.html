@@ -50,22 +50,22 @@
 		for(let i in arr){
 			let type = getObjectType(arr[i]);
 			if(type === 'Object'){
-				ret += "\n" + tabsStr + ".add("+convertObjectKeys(arr[i], tabs)+")";
+				ret += "\n" + tabsStr + ".put("+convertObjectKeys(arr[i], tabs)+")";
 			}
 			if(type === 'Array'){
-				ret += "\n" + tabsStr + ".add("+convertArrayOccurrences(arr[i], tabs)+")";
+				ret += "\n" + tabsStr + ".put("+convertArrayOccurrences(arr[i], tabs)+")";
 			}
 			if(type === 'String'){
-				ret += "\n" + tabsStr + ".add(\""+arr[i]+"\")";
+				ret += "\n" + tabsStr + ".put(\""+arr[i]+"\")";
 			}
 			if(type === 'Number'){
-				ret += "\n" + tabsStr + ".add("+arr[i]+")";
+				ret += "\n" + tabsStr + ".put("+arr[i]+")";
 			}
 			if(type === 'Boolean'){
-				ret += "\n" + tabsStr + ".add("+arr[i]+")";
+				ret += "\n" + tabsStr + ".put("+arr[i]+")";
 			}
 			if(type === 'Null'){
-				ret += "\n" + tabsStr + ".add(null)";
+				ret += "\n" + tabsStr + ".put(null)";
 			}
 		}
 		return ret;
